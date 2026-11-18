@@ -235,7 +235,25 @@ with res_col2:
     st.write(f"Confidence: **{prob_late*100:.1f}% Late Risk** vs **{(1-prob_late)*100:.1f}% On-Time**")
     
     st.markdown("#### Model Insight")
-    if "Naive Bayes" in model_choice:
+    if "Scratch Gaussian Naive Bayes" in model_choice:
+        st.info("ℹ️ **Gaussian Naive Bayes Reasoning**: Evaluates class Gaussian likelihoods. Inspect below to see which order features pushed the probability towards Late or On-Time.")
+        # Calculate feature contributions via Log-Likelihood Ratio (LLR)
+        feature_names = [name.replace("num__", "").replace("cat__", "") for name in preprocessor.get_feature_names_out()]
+        llr_values = scratch_gnb.explain_feature_contributions(input_trans)[0]
+
+        contrib_df = pd.DataFrame({
+            "Feature": feature_names,
+            "Log-Likelihood Push (LLR)": llr_values
+        })
+        # Filter to features that have non-zero contribution or top 6 absolute impact
+        contrib_df["Abs_LLR"] = contrib_df["Log-Likelihood Push (LLR)"].abs()
+        top_contrib = contrib_df.sort_values(by="Abs_LLR", ascending=False).head(6).sort_values(by="Log-Likelihood Push (LLR)")
+
+        st.markdown("##### 🔍 Top Feature Impact on This Order")
+        st.bar_chart(top_contrib.set_index("Feature")["Log-Likelihood Push (LLR)"])
+        st.caption("📈 Positive values (Right) push towards **High Risk (Late)**; Negative values (Left) push towards **Low Risk (On-Time)**.")
+    elif "Naive Bayes" in model_choice:
         st.info("ℹ️ **Gaussian Naive Bayes Reasoning**: Compares the Gaussian likelihood profiles of past on-time vs late shipments. High precision ensures minimal false alarms.")
     else:
         st.info("ℹ️ **Logistic Regression Reasoning**: Evaluates linear decision boundary weights across order parameters and regularized odds ratios.")
+

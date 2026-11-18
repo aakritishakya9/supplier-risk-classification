@@ -72,7 +72,10 @@ By shifting the classification threshold from the default $0.50$ down to $0.30$,
 | **Cloud EDA & Leakage Audit** | Person B (@aakritishakya9) | ✅ Complete | Run on Google Colab |
 | **Leakage-Safe Preprocessing Pipeline** | Person B (@aakritishakya9) | ✅ Complete | Centralized in `src/preprocessing.py` |
 | **Gaussian Naive Bayes (NumPy Scratch)** | Person B (@aakritishakya9) | ✅ Complete | Verified at 100% parity with sklearn |
-| **Interactive Streamlit Web Dashboard** | Person B (@aakritishakya9) | ✅ Complete | Live UI in `app/streamlit_app.py` |
+| **Feature Attribution (Log-Likelihood Ratios)** | Person B (@aakritishakya9) | ✅ Complete | Implemented in `src/models/naive_bayes.py` |
+| **Automated Unit Testing Suite** | Person B (@aakritishakya9) | ✅ Complete | 5 passing tests in `tests/test_naive_bayes.py` |
+| **Evaluation & Diagnostics Suite** | Person B (@aakritishakya9) | ✅ Complete | ROC, PR, thresholding in `src/evaluate.py` |
+| **Interactive Streamlit Web Dashboard** | Person B (@aakritishakya9) | ✅ Complete | Live UI with LLR attribution in `app/streamlit_app.py` |
 | **Technical Handover Report for Person A** | Person B (@aakritishakya9) | ✅ Complete | See [`PROJECT_PROGRESS_AND_HANDOVER_REPORT.md`](PROJECT_PROGRESS_AND_HANDOVER_REPORT.md) |
 | **Logistic Regression (NumPy Scratch)** | **Person A** | ⏳ In Progress | Scaffolding in `src/models/logistic_regression.py` |
 | **Gradient Descent Loss Curve & Tuning** | **Person A** | ⏳ In Progress | Learning rate & epoch tuning |
@@ -94,16 +97,20 @@ supplier-risk-classification/
 ├── src/
 │   ├── __init__.py
 │   ├── preprocessing.py          # Leakage-safe feature extraction & scaling
+│   ├── evaluate.py               # Evaluation metrics, ROC-AUC, PR-AUC & plotting
 │   └── models/
 │       ├── __init__.py
-│       ├── naive_bayes.py         # Person B: Scratch NumPy Gaussian Naive Bayes
+│       ├── naive_bayes.py         # Person B: Scratch NumPy Gaussian Naive Bayes + LLR explainability
 │       └── logistic_regression.py # Person A: Vectorized Scratch Logistic Regression
+├── tests/
+│   └── test_naive_bayes.py       # Automated unit tests (parity, numerical stability, tuning)
 ├── app/
 │   └── streamlit_app.py          # Interactive procurement risk assessment dashboard
 ├── requirements.txt
 ├── README.md
 └── PROJECT_PROGRESS_AND_HANDOVER_REPORT.md # Technical handover documentation for Person A
 ```
+
 
 ---
 
@@ -126,3 +133,10 @@ pip install -r requirements.txt
 python -m streamlit run app/streamlit_app.py
 ```
 Open **`http://localhost:8501`** in your browser to interact with the model selectors and threshold sliders live!
+
+### 3. Run Automated Unit Tests
+```bash
+python -m unittest discover tests
+```
+Verifies mathematical invariants, numerical stability against zero-variance features, probability normalization, and parity against `scikit-learn`.
+

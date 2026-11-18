@@ -108,13 +108,16 @@ class ScratchGaussianNB:
         probabilities = exp_posteriors / np.sum(exp_posteriors, axis=1, keepdims=True)
         return probabilities
 
-    def predict(self, X):
+    def predict(self, X, threshold=0.5):
         """
         Perform classification on an array of test vectors X.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
+        threshold : float or None, default=0.5
+            Decision threshold for binary classification (class 1).
+            If None or multi-class, argmax over class posteriors is used.
 
         Returns
         -------
@@ -122,6 +125,41 @@ class ScratchGaussianNB:
             Predicted target values.
         """
         X = np.asarray(X, dtype=np.float64)
+        if len(self.classes_) == 2 and threshold is not None:
+            probs = self.predict_proba(X)
+            # Default to class 1 as positive if classes are [0, 1]
+            return np.where(probs[:, 1] >= threshold, self.classes_[1], self.classes_[0])
+
         log_posteriors = self._calculate_log_likelihood(X)
         class_indices = np.argmax(log_posteriors, axis=1)
         return self.classes_[class_indices]
+
+    def explain_feature_contributions(self, X):
+        """
+        Compute per-feature log-likelihood ratio (LLR) for binary classification:
+            LLR_j = log( P(x_j | y=1) / P(x_j | y=0) )
+
+        Positive value -> pushes prediction towards High Risk (Late).
+        Negative value -> pushes prediction towards Low Risk (On-Time).
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+
+        Returns
+        -------
+        llr : ndarray of shape (n_samples, n_features)
+        """
+        if len(self.classes_) != 2:
+            raise ValueError("Explainability via LLR is supported for binary classification.")
+
+        X = np.asarray(X, dtype=np.float64)
+        mu0, mu1 = self.means_[0], self.means_[1]
+        var0, var1 = self.variances_[0], self.variances_[1]
+
+        # log P(x_j | 1) - log P(x_j | 0)
+        log_density_1 = -0.5 * np.log(2.0 * np.pi * var1) - 0.5 * ((X - mu1) ** 2) / var1
+        log_density_0 = -0.5 * np.log(2.0 * np.pi * var0) - 0.5 * ((X - mu0) ** 2) / var0
+
+        return log_density_1 - log_density_0
+
