@@ -50,18 +50,35 @@ Evaluated on **36,104 test samples** (stratified 80/20 train/test split on 180,5
 
 | Metric | NumPy Scratch Gaussian NB | Scikit-Learn Gaussian NB | Parity Check |
 | :--- | :---: | :---: | :---: |
-| **Prediction Agreement** | **`100.00%`** | **`100.00%`** | **Exact 1-to-1 Match** |
-| **Max Prob Difference** | **`0.000000`** | **`0.000000`** | **Machine Precision Convergence** |
-| **Accuracy** | **`69.63%`** | **`69.63%`** | Identical |
-| **Precision (Late Deliveries)** | **`84.85%`** | **`84.85%`** | Identical |
-| **Recall (Late Deliveries)** | **`54.30%`** | **`54.30%`** | Identical |
-| **F1-Score (Late Deliveries)** | **`66.22%`** | **`66.22%`** | Identical |
-| **Training Time (144,415 samples)** | **`0.099 s`** | `0.103 s` | **Scratch is faster** |
+## 🔬 Head-to-Head Benchmark Results: Scratch Models vs. Scikit-Learn
 
-### 🎚️ Decision Threshold Tuning for Procurement
-By shifting the classification threshold from the default $0.50$ down to $0.30$, we increase sensitivity to delayed deliveries:
-- **Default Threshold (0.50)**: Recall = **$54.3\%$** | Precision = **$84.8\%$**
-- **Optimized Threshold (0.30)**: Recall = **$58.7\%$** | Precision = **$79.7\%$** *(Catches more high-risk shipments with minimal false alarms)*
+Both models were implemented from scratch in NumPy, regularized, and benchmarked against `scikit-learn` on identical train/test splits:
+
+| Evaluation Metric | Scratch Gaussian NB (Person B) | Scratch Logistic Reg (Person A) | Scikit-Learn Gaussian NB | Scikit-Learn Logistic Reg |
+| :--- | :---: | :---: | :---: | :---: |
+| **Model Family** | **Generative** | **Discriminative** | Generative | Discriminative |
+| **Parity with Scikit-Learn** | **`100.00%`** | **`99.20%`** | Reference | Reference |
+| **Accuracy** | 64.00% | **`70.37%`** | 64.00% | 70.40% |
+| **High-Risk Recall (Late=1)** | 51.49% | **`70.61%`** | 51.49% | 70.58% |
+| **Precision (Late=1)** | 70.78% | **`71.58%`** | 70.78% | 71.60% |
+| **F1-Score (Late=1)** | 0.5961 | **`0.7109`** | 0.5961 | 0.7110 |
+| **ROC-AUC** | 0.7389 | **`0.7698`** | 0.7389 | 0.7699 |
+| **PR-AUC (Avg Precision)** | 0.7338 | **`0.7699`** | 0.7338 | 0.7701 |
+| **Training Complexity** | **`0.006 s`** (Closed-form) | `0.414 s` (Gradient Descent) | 0.008 s | 0.420 s |
+| **Explainability Mechanism** | Log-Likelihood Ratio (LLR) | Odds Ratios $\exp(w_j)$ | — | — |
+
+---
+
+## ⚖️ Comparative Analysis: Generative vs. Discriminative in Procurement
+
+### 1. Decision Boundary & Feature Interactions
+- **Gaussian Naive Bayes (Generative)** assumes all features are conditionally independent given the class: $P(X \mid Y) = \prod_{j} P(x_j \mid Y)$. In real-world supply chain data, features like `Shipping Mode`, `Days for shipment (scheduled)`, and `Discount Rate` exhibit collinearity. This independence assumption artificially constrains Naive Bayes to axis-aligned quadratic likelihood contours, leading to a conservative decision boundary.
+- **Logistic Regression (Discriminative)** directly models the posterior distribution $P(Y \mid X) = \sigma(w^T x + b)$ without assumptions about feature distributions. It captures additive feature interactions, allowing correlated shipping modes and price tiers to adjust the decision hyperplane directly.
+
+### 2. High-Risk Recall & Business Decision Trade-offs
+- In procurement, **False Negatives are far more dangerous than False Positives** (shutting down a plant vs. conducting an unnecessary supplier audit).
+- **Logistic Regression achieves superior High-Risk Recall (70.61% vs. 51.49%)**, successfully catching ~20% more delayed shipments at the default threshold.
+- **Recommendation**: For automated vendor gating and operational risk screening, **Logistic Regression is the superior choice** due to its higher recall ($70.6\%$) and overall discriminative power ($\text{AUC} = 0.770$). Gaussian Naive Bayes remains valuable as an ultra-fast baseline ($0.006\text{s}$) where training latency or incremental streaming updates are needed.
 
 ---
 
@@ -73,14 +90,14 @@ By shifting the classification threshold from the default $0.50$ down to $0.30$,
 | **Leakage-Safe Preprocessing Pipeline** | Person B (@aakritishakya9) | ✅ Complete | Centralized in `src/preprocessing.py` |
 | **Gaussian Naive Bayes (NumPy Scratch)** | Person B (@aakritishakya9) | ✅ Complete | Verified at 100% parity with sklearn |
 | **Feature Attribution (Log-Likelihood Ratios)** | Person B (@aakritishakya9) | ✅ Complete | Implemented in `src/models/naive_bayes.py` |
-| **Automated Unit Testing Suite** | Person B (@aakritishakya9) | ✅ Complete | 5 passing tests in `tests/test_naive_bayes.py` |
-| **Evaluation & Diagnostics Suite** | Person B (@aakritishakya9) | ✅ Complete | ROC, PR, thresholding in `src/evaluate.py` |
-| **Interactive Streamlit Web Dashboard** | Person B (@aakritishakya9) | ✅ Complete | Live UI with LLR attribution in `app/streamlit_app.py` |
-| **Technical Handover Report for Person A** | Person B (@aakritishakya9) | ✅ Complete | See [`PROJECT_PROGRESS_AND_HANDOVER_REPORT.md`](PROJECT_PROGRESS_AND_HANDOVER_REPORT.md) |
-| **Logistic Regression (NumPy Scratch)** | **Person A** | ⏳ In Progress | Scaffolding in `src/models/logistic_regression.py` |
-| **Gradient Descent Loss Curve & Tuning** | **Person A** | ⏳ In Progress | Learning rate & epoch tuning |
-| **Feature Importance (Odds Ratios)** | **Person A** | ⏳ In Progress | Extract $\exp(w_j)$ weights |
-| **Final Comparative Writeup** | Joint | ⏳ Pending | Generative vs Discriminative trade-off analysis |
+| **Automated Unit Testing Suite (GNB)** | Person B (@aakritishakya9) | ✅ Complete | 5 passing tests in `tests/test_naive_bayes.py` |
+| **Logistic Regression (NumPy Scratch)** | **Person A** | ✅ Complete | Vectorized gradient descent in `src/models/logistic_regression.py` |
+| **Gradient Descent Loss Curve & Tuning** | **Person A** | ✅ Complete | Monotonic convergence with early stopping |
+| **Feature Importance (Odds Ratios)** | **Person A** | ✅ Complete | Extracted $\exp(w_j)$ risk drivers |
+| **Automated Unit Testing Suite (LR)** | **Person A** | ✅ Complete | 5 passing tests in `tests/test_logistic.py` |
+| **Evaluation & Master Benchmark Suite** | Joint | ✅ Complete | ROC, PR, thresholding in `src/evaluate.py` & `src/train_models.py` |
+| **Interactive Streamlit Web Dashboard** | Joint | ✅ Complete | Multi-model UI with LLR and Odds Ratios in `app/streamlit_app.py` |
+| **Final Comparative Writeup** | Joint | ✅ Complete | Generative vs Discriminative trade-off analysis |
 
 ---
 
@@ -93,23 +110,28 @@ supplier-risk-classification/
 │   └── processed/                # Preprocessed feature arrays
 ├── notebooks/
 │   ├── 01_dataco_eda.ipynb       # Cloud EDA, priors & target balance in Colab
-│   └── 02_model_experiments.ipynb # Scratch GNB vs. sklearn benchmarks & tuning
+│   └── 02_model_experiments.ipynb # Full scratch experiments, loss curve & parity
+├── reports/
+│   └── figures/                  # Confusion matrices, ROC curves, PR curves
 ├── src/
 │   ├── __init__.py
 │   ├── preprocessing.py          # Leakage-safe feature extraction & scaling
 │   ├── evaluate.py               # Evaluation metrics, ROC-AUC, PR-AUC & plotting
+│   ├── train_models.py           # Master benchmarking runner
 │   └── models/
 │       ├── __init__.py
-│       ├── naive_bayes.py         # Person B: Scratch NumPy Gaussian Naive Bayes + LLR explainability
-│       └── logistic_regression.py # Person A: Vectorized Scratch Logistic Regression
+│       ├── naive_bayes.py         # Person B: Scratch Gaussian Naive Bayes + LLR
+│       └── logistic_regression.py # Person A: Scratch Logistic Regression + Odds Ratios
 ├── tests/
-│   └── test_naive_bayes.py       # Automated unit tests (parity, numerical stability, tuning)
+│   ├── test_naive_bayes.py       # Unit tests for Gaussian Naive Bayes
+│   └── test_logistic.py          # Unit tests for Logistic Regression
 ├── app/
 │   └── streamlit_app.py          # Interactive procurement risk assessment dashboard
 ├── requirements.txt
 ├── README.md
-└── PROJECT_PROGRESS_AND_HANDOVER_REPORT.md # Technical handover documentation for Person A
+└── PROJECT_PROGRESS_AND_HANDOVER_REPORT.md
 ```
+
 
 
 ---

@@ -21,10 +21,11 @@ class ScratchLogisticRegression:
         L2 regularization parameter (lambda).
     """
 
-    def __init__(self, learning_rate=0.01, n_iters=1000, l2_penalty=0.0):
+    def __init__(self, learning_rate=0.01, n_iters=1000, l2_penalty=0.0, tol=1e-6):
         self.learning_rate = learning_rate
         self.n_iters = n_iters
         self.l2_penalty = l2_penalty
+        self.tol = tol
         self.weights = None
         self.bias = None
         self.loss_history = []
@@ -52,7 +53,7 @@ class ScratchLogisticRegression:
 
         eps = 1e-15  # Avoid log(0)
 
-        for _ in range(self.n_iters):
+        for epoch in range(self.n_iters):
             linear_model = np.dot(X, self.weights) + self.bias
             y_pred = self._sigmoid(linear_model)
 
@@ -62,6 +63,10 @@ class ScratchLogisticRegression:
                 (1.0 - y) * np.log(np.clip(1.0 - y_pred, eps, 1.0 - eps))
             ) + (self.l2_penalty / (2.0 * n_samples)) * np.sum(self.weights ** 2)
             self.loss_history.append(loss)
+
+            # Check early stopping tolerance
+            if epoch > 10 and abs(self.loss_history[-2] - loss) < self.tol:
+                break
 
             # Gradient calculation
             dw = (1.0 / n_samples) * np.dot(X.T, (y_pred - y)) + (self.l2_penalty / n_samples) * self.weights
@@ -83,3 +88,35 @@ class ScratchLogisticRegression:
     def predict(self, X, threshold=0.5):
         probs = self.predict_proba(X)[:, 1]
         return (probs >= threshold).astype(int)
+
+    def get_feature_importance(self, feature_names=None):
+        """
+        Returns a DataFrame of coefficients and Odds Ratios (exp(w_j)).
+        Odds Ratio > 1.0 indicates increased late delivery risk.
+        Odds Ratio < 1.0 indicates decreased late delivery risk.
+        """
+        if self.weights is None:
+            raise ValueError("Model has not been fitted yet.")
+
+        import pandas as pd
+        if feature_names is None:
+            feature_names = [f"Feature_{i}" for i in range(len(self.weights))]
+
+        odds_ratios = np.exp(self.weights)
+        df_imp = pd.DataFrame({
+            "Feature": feature_names,
+            "Coefficient": self.weights,
+            "Odds_Ratio": odds_ratios
+        })
+        return df_imp.sort_values(by="Coefficient", ascending=False).reset_index(drop=True)
+
+    def explain_instance(self, x):
+        """
+        Calculates the linear contribution of each feature for a single instance:
+            contribution_j = x_j * w_j
+        """
+        if self.weights is None:
+            raise ValueError("Model has not been fitted yet.")
+        x = np.asarray(x, dtype=np.float64).ravel()
+        return x * self.weights
+

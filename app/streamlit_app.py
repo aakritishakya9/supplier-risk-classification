@@ -252,8 +252,29 @@ with res_col2:
         st.markdown("##### 🔍 Top Feature Impact on This Order")
         st.bar_chart(top_contrib.set_index("Feature")["Log-Likelihood Push (LLR)"])
         st.caption("📈 Positive values (Right) push towards **High Risk (Late)**; Negative values (Left) push towards **Low Risk (On-Time)**.")
+    elif "Scratch Logistic Regression" in model_choice:
+        st.info("ℹ️ **Logistic Regression Reasoning**: Evaluates linear decision boundary weights ($w_j$) across order features. Inspect below to see the specific feature contributions ($x_j \\cdot w_j$) for this order.")
+        feature_names = [name.replace("num__", "").replace("cat__", "") for name in preprocessor.get_feature_names_out()]
+        linear_contrib = scratch_lr.explain_instance(input_trans)
+
+        contrib_df = pd.DataFrame({
+            "Feature": feature_names,
+            "Linear Impact (x_j * w_j)": linear_contrib
+        })
+        contrib_df["Abs_Impact"] = contrib_df["Linear Impact (x_j * w_j)"].abs()
+        top_contrib = contrib_df.sort_values(by="Abs_Impact", ascending=False).head(6).sort_values(by="Linear Impact (x_j * w_j)")
+
+        st.markdown("##### 🔍 Top Feature Impact on This Order")
+        st.bar_chart(top_contrib.set_index("Feature")["Linear Impact (x_j * w_j)"])
+        st.caption("📈 Positive values (Right) increase odds of **Late Delivery**; Negative values (Left) increase odds of **On-Time Delivery**.")
+
+        with st.expander("📊 View Global Learned Odds Ratios (exp(w_j))"):
+            df_odds = scratch_lr.get_feature_importance(feature_names=feature_names)
+            st.dataframe(df_odds, use_container_width=True)
+            st.caption("💡 **Odds Ratio > 1.0**: Increases risk multiplier. **Odds Ratio < 1.0**: Protective against risk.")
     elif "Naive Bayes" in model_choice:
         st.info("ℹ️ **Gaussian Naive Bayes Reasoning**: Compares the Gaussian likelihood profiles of past on-time vs late shipments. High precision ensures minimal false alarms.")
     else:
-        st.info("ℹ️ **Logistic Regression Reasoning**: Evaluates linear decision boundary weights across order parameters and regularized odds ratios.")
+        st.info("ℹ️ **Logistic Regression Reasoning**: Evaluates regularized linear decision boundary weights and odds ratios.")
+
 

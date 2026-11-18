@@ -5,8 +5,11 @@ Computes procurement-focused metrics: High-Risk Recall, PR-AUC, Confusion Matrix
 
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
