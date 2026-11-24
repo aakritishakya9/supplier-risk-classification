@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Risk & Late Delivery Classification - Complete Project Report & Viva Defense Guide</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --secondary: #0f766e;
+            --accent: #dc2626;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.65;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 3.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Floating Print Bar */
+        .no-print-bar {
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-print {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.65rem 1.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-print:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            color: #0f172a;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .metadata-box {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            font-size: 0.92rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1.5px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1e293b;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Callout Boxes */
+        .callout {
+            padding: 1.2rem 1.4rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .callout-info {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            color: #0c4a6e;
+        }
+
+        .callout-warning {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            color: #7f1d1d;
+        }
+
+        .callout-success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #14532d;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-gold { background: #fef3c7; color: #92400e; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.92rem;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .winner-cell {
+            background-color: #ecfdf5 !important;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin: 1rem 0 1.5rem;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.88em;
+            background-color: #f1f5f9;
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            color: #0f172a;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Viva Card */
+        .viva-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #3b82f6;
+            border-radius: 6px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.25rem;
+            page-break-inside: avoid;
+        }
+
+        .viva-q {
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .viva-a {
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        /* Math Display */
+        .math-block {
+            text-align: center;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 0.85rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-family: "Cambria Math", "Times New Roman", serif;
+            font-size: 1.15rem;
+            color: #0f172a;
+        }
+
+        /* Print Optimization */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                font-size: 10.5pt;
+                color: black;
+            }
+
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .no-print-bar {
+                display: none !important;
+            }
+
+            h2 {
+                page-break-before: auto;
+                border-bottom: 1.5pt solid #333;
+                margin-top: 1.8rem;
+            }
+
+            .viva-card, pre, table, .callout {
+                page-break-inside: avoid;
+            }
+
+            pre {
+                background: #f1f5f9;
+                color: #000;
+                border: 1px solid #ccc;
+            }
+
+            @page {
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Print Button Bar (Hidden when printing to PDF) -->
+        <div class="no-print-bar">
+            <button class="btn-print" onclick="window.print()">
+                🖨️ Print / Save as PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <h1>Supplier Risk & Late Delivery Classification</h1>
+        <div class="subtitle">A Comparative Study of Generative (Gaussian Naive Bayes) vs. Discriminative (Logistic Regression) Machine Learning Paradigms Implemented from Scratch in NumPy</div>
+
+        <!-- Metadata -->
+        <div class="metadata-box">
+            <div><strong>Project Roles:</strong> Person A (Logistic Regression) & Person B (Naive Bayes)</div>
+            <div><strong>Dataset:</strong> DataCo Smart Supply Chain (~180,519 records)</div>
+            <div><strong>Repository:</strong> <code>github.com/aakritishakya9/supplier-risk-classification</code></div>
+            <div><strong>Implementation:</strong> 100% Pure Vectorized NumPy (Zero Black-Box ML)</div>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Executive Summary: What We Built and Why</h2>
+        
+        <p>Imagine running a high-precision manufacturing assembly plant producing smartphones or automotive sub-assemblies. You place hundreds of purchase orders every day with independent vendors worldwide.</p>
+        <ul>
+            <li><strong>If a shipment arrives on time:</strong> Production humming smoothly, customer demand is fulfilled, and capital flows as scheduled.</li>
+            <li><strong>If a shipment is delayed:</strong> Entire assembly lines halt, workers sit idle, emergency air freight must be booked at 5&times; cost, and SLA breach penalties occur.</li>
+        </ul>
+
+        <div class="callout callout-info">
+            <strong>The Core System Objective:</strong> We built an intelligent decision-support system for procurement managers. Before a purchase order is dispatched, our system evaluates parameters known at the moment of order placement and predicts:
+            <br><br>
+            <span class="badge badge-red">🔴 HIGH RISK (LATE DELIVERY)</span> or <span class="badge badge-green">🟢 LOW RISK (ON-TIME DELIVERY)</span>
+        </div>
+
+        <h3>The Two Scratch AI Models</h3>
+        <p>Rather than importing pre-made shortcuts, we coded both models by hand from fundamental linear algebra and probability theory in <strong>NumPy</strong>:</p>
+        <ul>
+            <li><strong>Gaussian Naive Bayes (The Profile Matcher - Generative):</strong> Builds two probability profiles (one for historical late shipments and one for on-time shipments) and asks which profile an incoming order fits better.</li>
+            <li><strong>Logistic Regression (The Scorekeeper - Discriminative):</strong> Directly calculates a weighted risk score across all clues, maps it through an S-shaped sigmoid function, and computes a calibrated risk percentage (0% to 100%).</li>
+        </ul>
+
+        <!-- Section 2 -->
+        <h2>2. Business Problem & Procurement Context</h2>
+        
+        <h3>The Asymmetric Cost of Machine Learning Errors</h3>
+        <p>In classical machine learning benchmarks, accuracy treats all mistakes equally. In supply chain operations, errors have profoundly asymmetric financial consequences:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Actual: LATE (Class 1)</th>
+                    <th>Actual: ON-TIME (Class 0)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Predicted LATE (1)</strong></td>
+                    <td class="winner-cell"><strong>True Positive (TP)</strong><br>Late shipment caught; buffer stock or backup carrier engaged.</td>
+                    <td><strong>False Positive (FP)</strong><br>Safe vendor flagged; minor administrative cost (10-min phone call).</td>
+                </tr>
+                <tr>
+                    <td><strong>Predicted SAFE (0)</strong></td>
+                    <td style="background-color: #fee2e2; color: #991b1b;"><strong>False Negative (FN) - CATASTROPHIC</strong><br>Late shipment missed; factory assembly line halts!</td>
+                    <td><strong>True Negative (TN)</strong><br>Smooth normal operations; zero friction.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+            <strong>Key Metric Takeaway:</strong> A False Negative is financially devastating, whereas a False Positive is merely inconvenient. Therefore, <strong>High-Risk Recall</strong> (capturing actual late shipments) is our primary metric, not overall accuracy.
+        </div>
+
+        <div class="math-block">
+            \(\text{Recall} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}\)
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Dataset & Target Leakage Prevention</h2>
+        
+        <p>We trained and evaluated our system using the real-world <strong>DataCo Smart Supply Chain Dataset</strong> (180,519 rows &times; 53 columns). The target column is <code>Late_delivery_risk</code> (54.83% Late vs. 45.17% On-Time).</p>
+
+        <h3>The Anti-Cheating Rule (Target Leakage Safeguard)</h3>
+        <p>During our cloud exploratory data analysis, we identified two severe target leakages that would give a model "fake" 100% accuracy:</p>
+        <ol>
+            <li><code>Days for shipping (real)</code>: Only recorded <em>after</em> the package reaches its destination.</li>
+            <li><code>Delivery Status</code>: Explicitly contains the text <em>"Late delivery"</em>.</li>
+        </ol>
+        <p>We permanently eliminated both columns, restricting feature inputs strictly to pre-shipment data known at purchase order creation: <code>Days for shipment (scheduled)</code>, <code>Shipping Mode</code>, <code>Product Price</code>, <code>Discount Rate</code>, <code>Order Quantity</code>, <code>Profit Ratio</code>, <code>Customer Segment</code>, and <code>Market</code>.</p>
+
+        <!-- Section 4 -->
+        <h2>4. Technologies and Justifications</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Technology</th>
+                    <th>Role in Project</th>
+                    <th>Engineering Justification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Python 3.12</strong></td>
+                    <td>Core Programming Language</td>
+                    <td>Standard language for data engineering, scientific computing, and ML.</td>
+                </tr>
+                <tr>
+                    <td><strong>NumPy</strong></td>
+                    <td>Scratch Algorithms</td>
+                    <td>Provides ultra-fast C-level vectorized array operations without black-box shortcuts.</td>
+                </tr>
+                <tr>
+                    <td><strong>Pandas</strong></td>
+                    <td>Data Cleaning & Wrangling</td>
+                    <td>Tabular transformations, leakage dropping, and missing value checks.</td>
+                </tr>
+                <tr>
+                    <td><strong>Scikit-Learn</strong></td>
+                    <td>Preprocessing & Parity Benchmark</td>
+                    <td>Used solely for <code>StandardScaler</code> and <code>OneHotEncoder</code>, and as a gold standard to verify scratch model correctness.</td>
+                </tr>
+                <tr>
+                    <td><strong>Matplotlib / Seaborn</strong></td>
+                    <td>Visualizations</td>
+                    <td>Generates ROC curves, Precision-Recall curves, confusion matrices, and loss plots.</td>
+                </tr>
+                <tr>
+                    <td><strong>Streamlit</strong></td>
+                    <td>Interactive Web App</td>
+                    <td>Enables pure-Python interactive UI with sliders and live attribution charts.</td>
+                </tr>
+                <tr>
+                    <td><strong>Google Colab</strong></td>
+                    <td>Cloud EDA & Training</td>
+                    <td>Processed 180,000 rows in Google Cloud without downloading heavy 95MB files locally.</td>
+                </tr>
+                <tr>
+                    <td><strong>Python Unittest</strong></td>
+                    <td>Automated Quality Assurance</td>
+                    <td>10 automated unit tests verifying numerical stability and Scikit-Learn parity.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Section 5 -->
+        <h2>5. In-Depth Code Walkthrough</h2>
+
+        <h3>5.1 <code>src/preprocessing.py</code> (The Data Pipeline)</h3>
+        <p>Standardizes numerical features to mean = 0, standard deviation = 1 (to ensure gradient descent updates weights evenly) and applies One-Hot Encoding to categorical variables.</p>
+        <pre><code># Data Preprocessing Pipeline
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", StandardScaler(), NUMERIC_FEATURES),
+        ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), CATEGORICAL_FEATURES),
+    ]
+)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, stratify=y)</code></pre>
+
+        <h3>5.2 <code>src/models/naive_bayes.py</code> (Scratch Gaussian Naive Bayes)</h3>
+        <p>Calculates class priors, feature means, and variances. Adds variance smoothing (\(\epsilon = 10^{-9}\)) to prevent division by zero, and conducts all probability operations in log-space to prevent floating-point underflow.</p>
+        <pre><code># Vectorized Log-Likelihood Computation
+log_likelihood = -0.5 * np.sum(np.log(2.0 * np.pi * var)) - 0.5 * np.sum(((X - mean) ** 2) / var, axis=1)
+log_posteriors[:, idx] = log_prior + log_likelihood
+
+# Safe Log-Sum-Exp Normalization
+max_log = np.max(log_posteriors, axis=1, keepdims=True)
+exp_posteriors = np.exp(log_posteriors - max_log)
+probabilities = exp_posteriors / np.sum(exp_posteriors, axis=1, keepdims=True)</code></pre>
+
+        <h3>5.3 <code>src/models/logistic_regression.py</code> (Scratch Vectorized Logistic Regression)</h3>
+        <p>Implements vectorized gradient descent, a numerically stable branching sigmoid using <code>np.where</code>, binary cross-entropy loss with \(L_2\) regularization penalty, and early stopping.</p>
+        <pre><code># Numerically Stable Branching Sigmoid
+def _sigmoid(self, z):
+    z = np.clip(z, -500.0, 500.0)
+    return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+
+# Vectorized Gradient Descent Step
+z = np.dot(X, self.weights) + self.bias
+y_pred = self._sigmoid(z)
+dw = (1.0 / n_samples) * np.dot(X.T, (y_pred - y)) + (self.l2_penalty / n_samples) * self.weights
+db = (1.0 / n_samples) * np.sum(y_pred - y)
+self.weights -= self.learning_rate * dw
+self.bias -= self.learning_rate * db</code></pre>
+
+        <!-- Section 6 -->
+        <h2>6. Experimental Findings & Head-to-Head Comparison</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Scratch Gaussian Naive Bayes</th>
+                    <th>Scratch Logistic Regression</th>
+                    <th>Scikit-Learn Baseline</th>
+                    <th>Outcome</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Algorithm Paradigm</strong></td>
+                    <td>Generative</td>
+                    <td>Discriminative</td>
+                    <td>Industry Benchmark</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>Scratch Parity</strong></td>
+                    <td><strong>100.00% match</strong></td>
+                    <td><strong>99.20% match</strong></td>
+                    <td>Reference</td>
+                    <td>Mathematical proof of correctness</td>
+                </tr>
+                <tr>
+                    <td><strong>High-Risk Recall</strong></td>
+                    <td>51.49%</td>
+                    <td class="winner-cell">70.61% 🏆</td>
+                    <td>70.64%</td>
+                    <td><strong>LogReg caught 20% more late shipments!</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>64.00%</td>
+                    <td class="winner-cell">70.37% 🏆</td>
+                    <td>70.41%</td>
+                    <td><strong>LogReg made 6.4% fewer total errors</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>ROC-AUC Score</strong></td>
+                    <td>0.7389</td>
+                    <td class="winner-cell">0.7698 🏆</td>
+                    <td>0.7701</td>
+                    <td><strong>LogReg achieves cleaner separation</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Training Time</strong></td>
+                    <td class="winner-cell">0.006s ⚡</td>
+                    <td>0.414s</td>
+                    <td>0.280s</td>
+                    <td><strong>Naive Bayes is 60&times; faster</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Section 7 -->
+        <h2>7. Why Logistic Regression Defeated Naive Bayes</h2>
+
+        <div class="callout callout-warning">
+            <strong>The Scientific Reason: Violation of Feature Independence</strong>
+            <p>Gaussian Naive Bayes relies on the foundational assumption that all features are conditionally independent:</p>
+            <div class="math-block">\(P(x_1, x_2, \dots, x_d \mid Y) = \prod_{j=1}^{d} P(x_j \mid Y)\)</div>
+            <p>In supply chain operations, this assumption completely collapses:
+            <code>Shipping Mode = First Class</code> is heavily correlated with <code>Scheduled Days = 1</code>. Because these features are collinear, Naive Bayes counts the same risk twice, distorting probability distributions and missing ~20% more late deliveries.</p>
+        </div>
+
+        <p>In contrast, <strong>Logistic Regression</strong> is a discriminative model that makes no independence assumptions. It simultaneously balances interrelated weights across features, making it the superior model for real-world procurement risk management.</p>
+
+        <!-- Section 8 -->
+        <h2>8. Master Viva & Interview Q&A Cheatsheet</h2>
+
+        <div class="viva-card">
+            <div class="viva-q">Q1: Why did you build the models from scratch in NumPy instead of just using Scikit-Learn?</div>
+            <div class="viva-a">"Implementing the algorithms from scratch demonstrates a fundamental grasp of machine learning mathematics—vectorized gradient descent, loss functions, numerical stability safeguards like Log-Sum-Exp, and log-space arithmetic. Scikit-Learn was then used as an objective verification baseline, where our scratch code achieved over 99.2% parity."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q2: What is the fundamental difference between Generative and Discriminative models?</div>
+            <div class="viva-a">"A <strong>Generative model</strong> (like Gaussian Naive Bayes) learns the joint probability \(P(X, Y)\) by modeling how each class generates feature distributions: <em>'What does a typical on-time order look like vs. a late order?'</em><br>A <strong>Discriminative model</strong> (like Logistic Regression) focuses strictly on the decision boundary \(P(Y \mid X)\), directly separating late and on-time orders without modeling input generation."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q3: What is Target Leakage and how did you prevent it?</div>
+            <div class="viva-a">"Target leakage happens when features contain information that would only be available after the target event has taken place. In DataCo, <code>Days for shipping (real)</code> and <code>Delivery Status</code> give away delivery outcomes. Including them creates an artificially perfect model in training that is useless in production. We permanently removed both during EDA."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q4: Why is High-Risk Recall prioritized over Accuracy?</div>
+            <div class="viva-a">"In supply chain management, prediction errors have asymmetric costs. Missing a late delivery (False Negative) shuts down factory assembly lines, causing severe financial penalties. Flagging an on-time delivery (False Positive) only results in a routine check-in. Because False Negatives are far more damaging, High-Risk Recall is our north-star metric."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q5: How does decision threshold tuning benefit a procurement manager?</div>
+            <div class="viva-a">"Standard binary classifiers use a default threshold of 0.50. In our Streamlit dashboard, a procurement manager can lower the threshold to 0.30. This makes the system more sensitive, increasing late shipment recall from 70.6% to nearly 78%, ensuring almost no delayed orders slip through undetected."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q6: What techniques did you use for numerical stability in code?</div>
+            <div class="viva-a">"In Naive Bayes, we operated entirely in log-space to prevent floating-point underflow, added variance smoothing (\(\epsilon = 10^{-9}\)), and applied the Log-Sum-Exp trick. In Logistic Regression, we used an <code>np.where</code> branching sigmoid with <code>np.clip(z, -500, 500)</code> to prevent floating-point overflow in \(\exp(-z)\), and clipped probabilities to \([\epsilon, 1-\epsilon]\) to avoid \(\ln(0)\)."</div>
+        </div>
+
+        <div class="viva-card">
+            <div class="viva-q">Q7: How did you divide the work between Person A and Person B?</div>
+            <div class="viva-a">"<strong>Person A</strong> led the Discriminative track: derived vectorized cross-entropy, implemented scratch Logistic Regression with \(L_2\) regularization, built the Odds Ratio module, and wrote unit tests.<br><strong>Person B</strong> led the Generative and Systems track: derived Gaussian likelihood with variance smoothing, implemented scratch Naive Bayes with LLR attribution, conducted cloud EDA on Google Colab, and built the Streamlit web dashboard."</div>
+        </div>
+
+    </div>
+
+</body>
+</html>
