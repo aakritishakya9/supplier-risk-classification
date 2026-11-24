@@ -7,20 +7,6 @@
 
 ---
 
-## About the Project
-
-* **Project Title**: Supplier Risk and Late Delivery Classification
-* **Course**: Artificial Intelligence in Mechanical Engineering
-* **Institution**: Indira Gandhi Delhi Technical University for Women (IGDTUW)
-* **Authors**: Aakriti Shakya (Enrollment No. 00301042024) and Ayushi Giri (Enrollment No. 0191042024)
-* **Objective**: Build an automated AI decision-support system to predict whether a purchase order is at High Risk (Late) or Low Risk (On-Time) at the exact moment of order placement. This enables plant managers to intervene proactively and prevent costly production line halts in Lean and Just-in-Time (JIT) manufacturing environments.
-* **Core Approach**: Develop and benchmark two contrasting machine learning paradigms implemented entirely **from scratch in pure NumPy** (without third-party estimation libraries) against industry-standard Scikit-Learn baselines:
-  * **Generative / Probabilistic Model**: Gaussian Naive Bayes with log-likelihood estimation, variance smoothing, and Log-Sum-Exp numerical stabilization.
-  * **Discriminative Model**: Vectorized Logistic Regression with batch gradient descent, early stopping, $L_2$ regularization, and branching numerically stable sigmoid activation.
-* **Dataset**: DataCo Smart Supply Chain Dataset (180,519 real-world international transactions) with rigorous target leakage safeguards.
-
----
-
 ## 1. Business Context and Problem Formulation
 
 Modern manufacturing operations (such as automotive assembly plants and aerospace fabrication) function under Lean and Just-in-Time (JIT) scheduling principles. Under JIT, component buffer stocks are kept minimal, meaning supplier delivery exceptions introduce asymmetric operational costs:
