@@ -165,8 +165,7 @@ supplier-risk-classification/
 ├── app/
 │   └── streamlit_app.py          # Interactive Streamlit risk assessment dashboard
 ├── requirements.txt
-├── README.md
-└── COURSE_PROJECT_REPORT.md
+└── README.md
 ```
 
 ---
